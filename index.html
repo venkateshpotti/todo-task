@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Submission</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            color: #000000;
+        }
+        
+        header {
+            position: relative;
+            text-align: center;
+            height: 120px; 
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            width: 98%;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+        header p{
+            font-weight: 100;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+  
+        @keyframes moveCircles {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-50%) translateX(-50%); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        .banner-background {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; overflow: hidden;
+        }
+
+        .circle {
+            position: absolute; width: 200px; height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: moveCircles 10s infinite linear;
+        }
+
+        .circle:nth-child(1) { top: 10%; left: 20%; animation-duration: 8s; }
+        .circle:nth-child(2) { top: 50%; left: 70%; animation-duration: 12s; }
+        .circle:nth-child(3) { top: 80%; left: 40%; animation-duration: 15s; }
+
+        /* MODIFIED: Center the single panel */
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            /* MODIFIED: Set a max-width for the panel */
+            width: 100%;
+            max-width: 700px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .panel-title {
+            margin: 0; font-size: 1.5rem; font-weight: 600; color: #3a0098;
+        }
+        
+        .form-group { margin-bottom: 1.5rem; }
+        
+        .form-label {
+            display: block; margin-bottom: 0.5rem; font-weight: 500; color: #000000;
+        }
+        
+        .form-control {
+            width: 100%; padding: 0.8rem 1rem; border: 1px solid #ddd;
+            border-radius: 8px; font-size: 1rem; transition: border 0.3s;
+        }
+        
+        .form-control:focus { outline: none; border-color: #150389; }
+        
+        .form-select {
+            appearance: none; background-repeat: no-repeat;
+            background-position: right 1rem center; background-size: 1em;
+        }
+        
+        .btn {
+            display: inline-block; padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #2724d8 0%, #509ebb 100%);
+            color: white; border: none; border-radius: 8px; font-size: 1rem;
+            font-weight: 500; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .btn:active { transform: translateY(0); }
+        .btn-block { display: block; width: 100%; }
+        
+        .error-message {
+            color: red; font-size: 0.8rem;
+            margin-top: -1rem; margin-bottom: 1rem; display: none;
+        }
+
+        /* Dark Mode styles (unchanged) */
+        .dark-mode { background-color: #121212; color: #ffffff ; }
+        .dark-mode header { background: linear-gradient(135deg, #3a0098 0%, #150389 100%); color: white; box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); }
+        .dark-mode header h1, .dark-mode header p { color: white; }
+        .dark-mode .panel { background: #1e1e1e; box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); }
+        .dark-mode .panel-title { color: #6400fa; }
+        .dark-mode label { color: white; }
+        .dark-mode .form-control { background: #252525; color: #ffffff; border: 1px solid #555; }
+        .dark-mode .form-control:focus { border-color: #a970ff; }
+        .dark-mode .btn { background: linear-gradient(135deg, #5724d8 0%, #509ebb 100%); box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1); }
+        .dark-mode .error-message { color: #ff8080; }
+    </style>
+</head>
+<body>
+ 
+    <header>
+        <div class="banner-background">
+          <div class="circle"></div>
+          <div class="circle"></div>
+          <div class="circle"></div>
+        </div>
+        <h1>Work Submission</h1>
+        <p>Submit your completed or in-progress work</p>
+    </header>
+
+    <div class="dashboard">
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Submit Your Work</h2>
+            </div>
+            
+            <form id="workUpdateForm" onsubmit="submitWorkUpdate(event)">
+                <div class="form-group">
+                    <label for="task-name" class="form-label">Work Item Name</label>
+                    <input type="text" id="task-name" class="form-control" name="task-name" required minlength="5" placeholder="Enter Work Item name" maxlength="100">
+                    <div class="error-message" id="task-name-error">Work Item name must be at least 5 characters long.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="employee-name" class="form-label">Employee Name</label>
+                    <input type="text" id="employee-name" class="form-control" placeholder="Enter your Name" required 
+                           minlength="3" maxlength="100"
+                           pattern="^[A-Za-z]+(?:\s[A-Za-z]+)*$"
+                           title="Only letters and single spaces are allowed.">
+                    <div class="error-message" id="employee-name-error">Invalid employee name format.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="employee-id" class="form-label">Employee ID</label>
+                    <input type="text" id="employee-id" class="form-control" name="employee-id" required minlength="7" maxlength="7" 
+                           placeholder="Enter Your ID" pattern="^[A-Z]{3}(?!0000)[0-9]{4}$" 
+                           title="Employee ID should be in the format: 3 uppercase letters followed by 4 non-zero digits.">
+                    <div class="error-message" id="employee-id-error">Employee ID must be in the format ABC1234.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="upload-doc" class="form-label">Upload Document</label>
+                    <input type="file" id="upload-doc" class="form-control" name="upload-doc" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
+                           title="Acceptable file formats: PDF, DOC, DOCX, JPG, JPEG, PNG, TXT">
+                    <div class="error-message" id="upload-doc-error">Please upload a valid file.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="task-status" class="form-label">Work Status</label>
+                    <select id="task-status" class="form-control form-select" name="task-status" required>
+                        <option value="">-- Select Status --</option>
+                        <option value="completed">Completed</option>
+                        <option value="inprocess">In Progress</option>
+                    </select>
+                    <div class="error-message" id="task-status-error">Please select a work status.</div>
+                </div>
+                
+                <button type="submit" class="btn btn-block">Submit Work Update</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupValidation();
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) document.body.classList.add('dark-mode');
+        });
+        
+        async function submitWorkUpdate(event) {
+            event.preventDefault();
+            
+            if (!validateForm()) return;
+            
+            const taskData = {
+                taskName: document.getElementById('task-name').value,
+                employeeName: document.getElementById('employee-name').value,
+                employeeId: document.getElementById('employee-id').value,
+                uploadDoc: document.getElementById('upload-doc').files[0].name,
+                taskStatus: document.getElementById('task-status').value,
+            };
+            
+            try {
+                 const response = await fetch(`${API_BASE_URL}/api/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(taskData)
+                });
+                
+                if (!response.ok) throw new Error('Submission failed');
+
+                document.getElementById('workUpdateForm').reset();
+                alert('Work update submitted successfully!');
+
+            } catch(error) {
+                console.error('Error submitting work:', error);
+                alert('Error: Could not submit work. Please check the console and ensure the server is running.');
+            }
+        }
+        
+        function validateForm() {
+            let isValid = true;
+            const fields = [
+                { id: 'task-name', errorId: 'task-name-error', validate: val => val.length >= 5 },
+                { id: 'employee-name', errorId: 'employee-name-error', validate: val => /^[A-Za-z]+(?:\s[A-Za-z]+)*$/.test(val.trim()) },
+                { id: 'employee-id', errorId: 'employee-id-error', validate: val => /^[A-Z]{3}(?!0000)[0-9]{4}$/.test(val.trim()) },
+                { id: 'upload-doc', errorId: 'upload-doc-error', validate: (val, el) => el.files.length > 0 },
+                { id: 'task-status', errorId: 'task-status-error', validate: val => val !== "" }
+            ];
+
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const error = document.getElementById(field.errorId);
+                if (!field.validate(input.value, input)) {
+                    error.style.display = 'block';
+                    isValid = false;
+                } else {
+                    error.style.display = 'none';
+                }
+            });
+            
+            return isValid;
+        }
+
+        function setupValidation() {
+            document.getElementById('task-name').addEventListener('input', validateForm);
+            document.getElementById('employee-name').addEventListener('input', validateForm);
+            document.getElementById('employee-id').addEventListener('input', validateForm);
+            document.getElementById('upload-doc').addEventListener('change', validateForm);
+            document.getElementById('task-status').addEventListener('change', validateForm);
+        }
+    </script>
+</body>
+</html>
