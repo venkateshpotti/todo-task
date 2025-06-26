@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR - Work Allocation</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            color: #000000;
+        }
+        
+        header {
+            position: relative; text-align: center; height: 120px; 
+            /* MODIFIED COLOR */
+            background: linear-gradient(135deg, #005f73 0%, #0a9396 100%);
+            color: #fff; border-radius: 15px; overflow: hidden; display: flex;
+            width: 98%; margin-bottom: 20px; align-items: center; justify-content: center;
+            flex-direction: column; font-family: Verdana, Geneva, Tahoma, sans-serif;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0; font-size: 36px; color: white; font-weight: 600; letter-spacing: 2px;
+            position: relative; z-index: 2;
+        }
+        header p{ font-weight: 100; font-size: 18px; margin-top: 10px; }
+    
+        @keyframes moveCircles {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-50%) translateX(-50%); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        .banner-background {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; overflow: hidden;
+        }
+
+        .circle {
+            position: absolute; width: 200px; height: 200px;
+            background: rgba(255, 255, 255, 0.1); border-radius: 50%;
+            animation: moveCircles 10s infinite linear;
+        }
+
+        .circle:nth-child(1) { top: 10%; left: 20%; animation-duration: 8s; }
+        .circle:nth-child(2) { top: 50%; left: 70%; animation-duration: 12s; }
+        .circle:nth-child(3) { top: 80%; left: 40%; animation-duration: 15s; }
+
+        .dashboard {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;
+        }
+        
+        .panel {
+            background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 1.5rem; height: 100%;
+        }
+        
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;
+        }
+        
+        .panel-title {
+            display: flex; margin: 0; font-size: 1.5rem; font-weight: 600; 
+            /* MODIFIED COLOR */
+            color: #005f73;
+        }
+       
+        .form-group { margin-bottom: 1.5rem; }
+        
+        .form-label {
+            display: block; margin-bottom: 0.5rem; font-weight: 500; color: #000000;
+        }
+        
+        .form-control {
+            width: 100%; padding: 0.8rem 1rem; border: 1px solid #ddd;
+            border-radius: 8px; font-size: 1rem; transition: border 0.3s;
+        }
+        
+        /* MODIFIED COLOR */
+        .form-control:focus { outline: none; border-color: #0a9396; }
+        
+        .btn {
+            display: inline-block; padding: 0.8rem 1.5rem;
+            /* MODIFIED COLOR */
+            background: linear-gradient(135deg, #0a9396 0%, #94d2bd 100%);
+            color: white; border: none; border-radius: 8px; font-size: 1rem;
+            font-weight: 500; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .btn:active { transform: translateY(0); }
+        .btn-block { display: block; width: 100%; }
+        
+        .history-container { height: 600px; overflow: auto; padding: 1rem; }
+        
+        .history-item {
+            background: white; border-radius: 10px; padding: 1.5rem;
+            margin-bottom: 1rem; box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .history-info h4 { margin: 0 0 0.3rem 0; font-size: 1.1rem; color: #444; }
+        .history-info p { margin: 0; font-size: 0.9rem; color: #777; }
+        .history-date { font-size: 0.85rem; color: #999; }
+        .empty-state { text-align: center; padding: 3rem 0; color: #777; }
+        .empty-state img { width: 120px; opacity: 0.7; margin-bottom: 1rem; }
+        .error-message { color: red; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+        .status-badge {
+            display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 500;
+        }
+        .status-inprocess { background: #e5f6ff; color: #0077ff; }
+        .status-completed { background: #e5ffe7; color: #00aa33; }
+        
+        @media (max-width: 1024px) { .dashboard { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+ 
+    <header>
+        <div class="banner-background">
+          <div class="circle"></div>
+          <div class="circle"></div>
+          <div class="circle"></div>
+        </div>
+        <h1>HR Admin Panel</h1>
+        <p>Allocate new tasks and monitor submissions</p>
+    </header>
+    
+    <div class="dashboard">
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Allocate New Work</h2>
+            </div>
+            
+            <form id="allocateWorkForm" onsubmit="allocateTask(event)">
+                <div class="form-group">
+                    <label for="task-name" class="form-label">Task Name</label>
+                    <input type="text" id="task-name" class="form-control" required minlength="5" placeholder="e.g., Design homepage mockup">
+                    <div class="error-message" id="task-name-error">Task name must be at least 5 characters.</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="deadline" class="form-label">Deadline</label>
+                    <input type="date" id="deadline" class="form-control" required>
+                    <div class="error-message" id="deadline-error">Deadline is required.</div>
+                </div>
+                
+                <button type="submit" class="btn btn-block">Allocate Task</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Work Submission History</h2>
+            </div>
+            <div class="history-container" id="workHistoryContainer">
+                <!-- History items will be loaded here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSubmissionHistory();
+        });
+
+        async function loadSubmissionHistory() {
+            const historyContainer = document.getElementById('workHistoryContainer');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/submitted-tasks`);
+                if (!response.ok) throw new Error('Failed to fetch history');
+                
+                const taskHistory = await response.json();
+                
+                if (taskHistory.length === 0) {
+                    historyContainer.innerHTML = `
+                        <div class="empty-state">
+                            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No history">
+                            <h3>No submissions yet</h3>
+                            <p>Submitted work from employees will appear here.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyContainer.innerHTML = '';
+                
+                taskHistory.forEach(task => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    
+                    const statusClass = task.taskStatus === 'completed' ? 'status-completed' : 'status-inprocess';
+                    const statusText = task.taskStatus === 'completed' ? 'Completed' : 'In Progress';
+                    
+                    historyItem.innerHTML = `
+                        <div class="history-info">
+                            <h4>${task.taskName}</h4>
+                            <p>${task.employeeName} (${task.employeeId})</p>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="history-date">${task.allocatedTime}</div>
+                    `;
+                    
+                    historyContainer.appendChild(historyItem);
+                });
+            } catch (error) {
+                console.error('Error loading history:', error);
+                historyContainer.innerHTML = `<p style="color:red; text-align:center;">Could not load submission history. Make sure the server is running.</p>`;
+            }
+        }
+        
+        async function allocateTask(event) {
+            event.preventDefault();
+            
+            const taskNameInput = document.getElementById('task-name');
+            const deadlineInput = document.getElementById('deadline');
+            const taskName = taskNameInput.value.trim();
+            const deadline = deadlineInput.value;
+            
+            let isValid = true;
+            if (taskName.length < 5) {
+                document.getElementById('task-name-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('task-name-error').style.display = 'none';
+            }
+            if (!deadline) {
+                document.getElementById('deadline-error').style.display = 'block';
+                isValid = false;
+            } else {
+                 document.getElementById('deadline-error').style.display = 'none';
+            }
+
+            if (!isValid) return;
+
+            const taskData = {
+                taskName: taskName,
+                deadline: new Date(deadline).toLocaleDateString('en-CA') // Format as YYYY-MM-DD
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(taskData),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to allocate task');
+                }
+
+                alert('Task allocated successfully!');
+                document.getElementById('allocateWorkForm').reset();
+                
+            } catch (error) {
+                console.error('Error allocating task:', error);
+                alert('Error: Could not allocate task. Please check the console and ensure the server is running.');
+            }
+        }
+    </script>
+</body>
+</html>
